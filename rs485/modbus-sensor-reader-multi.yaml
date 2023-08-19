@@ -1,0 +1,154 @@
+esphome:
+  name: modbus-sensor-reader
+  friendly_name: modbus-sensor-reader
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "xxx"
+
+ota:
+  password: "xxx"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.1.15
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-xxx"
+    password: "xxx"
+
+captive_portal:
+
+### RS485
+uart:
+  - id: uart_1
+    rx_pin: 19
+    tx_pin: 18
+    baud_rate: 4800
+    stop_bits: 1
+## In case of use of multiple RS485 adapters
+#  - id: uart_2
+#    rx_pin: 16
+#    tx_pin: 15
+#    baud_rate: 4800
+#    stop_bits: 1
+
+modbus:
+  - id: modbus1
+    uart_id: uart_1
+    flow_control_pin: 4
+    send_wait_time: 250ms # Time between each sensor read. Increase to avoid overlapping reads or in case of CRC errors
+## In case of use of multiple RS485 adapters
+#  - id: modbus2
+#    uart_id: uart_2
+#    flow_control_pin: 2
+
+modbus_controller:
+  - id: con_modbus_1
+    modbus_id: modbus1
+    update_interval: 11s
+    address: 0x01 # Set/write the right address in the sensor memory before use
+    command_throttle: 150ms
+    setup_priority: -10
+  - id: con_modbus_2
+    modbus_id: modbus1
+    update_interval: 11s
+    address: 0x02 # Set/write the right address in the sensor memory before use
+    command_throttle: 150ms
+    setup_priority: -10
+## In case of use of multiple RS485 adapters
+#  - id: con_modbus_name3
+#    modbus_id: modbus2
+#    update_interval: 11s
+#    address: 0x03 # Set/write the right address in the sensor memory before use
+#    command_throttle: 150ms
+#    setup_priority: -10
+
+sensor:
+  # Sensor 1
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_1
+    name: "Humidity"
+    id: humidity
+    address: 0x0000
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.1
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_1
+    name: "Temperature"
+    id: temperature
+    address: 0x0001
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.1
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_1
+    name: "Conductivity"
+    id: conductivity
+    address: 0x0002
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "μs/cm"
+    accuracy_decimals: 1
+    state_class: measurement
+
+  # Sensor 2
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_2
+    name: "Humidity 2"
+    id: humidity_2
+    address: 0x0000
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "%"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.1
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_2
+    name: "Temperature 2"
+    id: temperature_2
+    address: 0x0001
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.1
+    state_class: measurement
+  - platform: modbus_controller
+    modbus_controller_id: con_modbus_2
+    name: "Conductivity 2"
+    id: conductivity_2
+    address: 0x0002
+    register_type: read
+    value_type: U_WORD
+    unit_of_measurement: "μs/cm"
+    accuracy_decimals: 1
+    state_class: measurement
