@@ -1,0 +1,4 @@
+Amarelo/Yellow - 1 
+Azul/Blue - 2
+Marrom/Brown - 3
+Preto/Black - 4
