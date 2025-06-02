@@ -37,3 +37,6 @@ ESP32/ESPHome SDI12/Modbus Sensor Hub
 2. Update the device with:
    1. For single sensors: [rs485/modbus-sensor-reader.yaml](rs485/modbus-sensor-reader.yaml).
    1. For multiple sensors: [rs485/modbus-sensor-reader-multi.yaml](rs485/modbus-sensor-reader-multi.yaml).
+  
+## Tools
+[Terminal BPP](https://sites.google.com/site/terminalbpp/) - COM port development tool, to conect and interact with SDI-12 adapter over USB. With it you can send commands do read and write to SDI-12 sensors.
